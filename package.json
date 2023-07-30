@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/ngblaylock/blunt-images/issues"
   },
-  "homepage": "https://github.com/ngblaylock/blunt-images#readme"
+  "homepage": "https://github.com/ngblaylock/blunt-images#readme",
+  "dependencies": {
+    "chokidar": "^3.5.3"
+  }
 }

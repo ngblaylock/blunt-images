@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const chokidar = require("chokidar");
 const args = process.argv.slice(2); // The first two items are 'node' and 'index.js'
 const configFilePath = args[0];
 
@@ -8,16 +9,11 @@ if (!configFilePath) {
   process.exit(1);
 }
 
-const config = require(configFilePath);
-console.log(config);
+const bluntConfig = require(configFilePath);
 
-// Array of folder paths to watch
-const folderPaths = ["./images", "./other_images"];
+// Get the directory of the config file
+const configDir = path.dirname(configFilePath);
 
-// Function to log the path of the added picture file
-function logAddedPicture(filePath) {
-  console.log("Added picture:", filePath);
-}
 
 // Function to check if a file has a valid image extension
 function isImageFile(fileName) {
@@ -26,35 +22,27 @@ function isImageFile(fileName) {
   return imageExtensions.includes(ext);
 }
 
-// Function to handle changes in the folder
-function handleFolderChange(folderPath, eventType, fileName) {
-  if (eventType === "rename" && fileName) {
-    const filePath = path.join(folderPath, fileName);
-    // Check if the added item is a file and has a valid image extension
-    fs.promises
-      .stat(filePath)
-      .then((stats) => {
-        if (stats.isFile() && isImageFile(fileName)) {
-          logAddedPicture(filePath);
-        }
-      })
-      .catch((err) => {
-        console.error("Error reading file stats:", err);
-      });
-  }
-}
-
-// Watch each folder path for changes
-folderPaths.forEach((folderPath) => {
-  fs.promises.watch(
-    folderPath,
-    { encoding: "utf-8" },
-    (eventType, fileName) => {
-      handleFolderChange(folderPath, eventType, fileName);
-    }
+// Watch each folder path for changes using chokidar
+bluntConfig.forEach((config) => {
+  const absoluteInputPath = path.resolve(configDir, config.input);
+  console.log(absoluteInputPath);
+  console.log(
+    `Watching folders ${absoluteInputPath} for picture additions...`
   );
-});
 
-console.log(
-  `Watching folders ${folderPaths.join(", ")} for picture additions...`
-);
+  // Create the chokidar watcher for each folder path
+  const watcher = chokidar.watch(absoluteInputPath, { ignored: /^\./, persistent: true });
+
+  // Add event listeners for 'add' and 'unlink' events
+  watcher.on("add", (filePath) => {
+    // Check if the added item is a file and has a valid image extension
+    const fileName = path.basename(filePath);
+    if (fs.existsSync(filePath) && isImageFile(fileName)) {
+      console.log("Added picture:", filePath, config);
+    }
+  });
+
+  watcher.on("unlink", (filePath) => {
+    console.log("File removed:", filePath);
+  });
+});
