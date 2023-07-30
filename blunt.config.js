@@ -1,7 +1,7 @@
 module.exports = [
   {
-    input: './images',
-    output: './optimized-images',
+    input: './test/images',
+    output: './test/optimized-images',
     sizes: [100, 400, 800],
     options: {
       // width
@@ -13,8 +13,8 @@ module.exports = [
     }
   }, 
   {
-    input: './images2',
-    output: './optimized-images2',
+    input: './test/images2',
+    output: './test/optimized-images2',
     sizes: [
       {width: 100, height: 200}, // portrait
       {width: 300, height: 200}, // landscape
