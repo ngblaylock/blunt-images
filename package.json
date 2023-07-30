@@ -1,0 +1,22 @@
+{
+  "name": "blunt-images",
+  "version": "0.0.1",
+  "description": "A quick image resizing and optimization utility using Sharp for static sites.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngblaylock/blunt-images.git"
+  },
+  "keywords": [
+    "image"
+  ],
+  "author": "Nathan Blaylock",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ngblaylock/blunt-images/issues"
+  },
+  "homepage": "https://github.com/ngblaylock/blunt-images#readme"
+}
