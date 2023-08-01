@@ -11,10 +11,15 @@ if (!configFilePath) {
   process.exit(1);
 }
 
-const bluntConfig = require(configFilePath);
+// Resolve the absolute path of the config file relative to the current working directory
+const resolvedConfigFilePath = path.resolve(process.cwd(), configFilePath);
+
+console.log(resolvedConfigFilePath);
+
+const bluntConfig = require(resolvedConfigFilePath);
 
 // Get the directory of the config file
-const configDir = path.dirname(configFilePath);
+const configDir = path.dirname(resolvedConfigFilePath);
 
 // Delete all output folders before running the script to start with a blank slate.
 bluntConfig.forEach((config) => {

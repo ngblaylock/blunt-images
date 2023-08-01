@@ -35,3 +35,9 @@ module.exports = [
 ```
 4. Run `npm run blunt`
 
+## Deploy Process
+
+1. Update the version in `package.json`
+2. Commit and push changes.
+3. Add a new release and tag in GitHub (v1.0.0-beta.x)
+4. Run `npm publish`
