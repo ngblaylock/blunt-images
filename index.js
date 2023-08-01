@@ -36,8 +36,7 @@ const runSharp = (filePath, config) => {
   console.log("Running sharp on ", filePath);
   const fileName = path.basename(filePath);
   const outputDir = path.resolve(configDir, config.output);
-  const outputPath = path.join(outputDir, `100_${fileName}`);
-
+  
   // Check if the output directory exists; if not, create it
   if (!fs.existsSync(outputDir)) {
     try {
@@ -47,16 +46,32 @@ const runSharp = (filePath, config) => {
       return;
     }
   }
-
-  sharp(filePath)
-    .resize({ width: 100 })
-    .toFile(outputPath, (err) => {
-      if (err) {
-        console.error("Error processing image:", err);
-      } else {
-        console.log("Image saved at:", outputPath);
-      }
-    });
+  
+  config.sizes.forEach(size => {
+    options = {}
+    if(typeof size === 'number'){
+      options.width = size;
+      options.height = size;
+      options.prefix = `${size}`
+    }else{
+      options.width = size.width;
+      options.height = size.height;
+      options.prefix = `${size.width}x${size.height}`
+    }
+    options = {...options, ...config}
+    console.log(options);
+    const outputPath = path.join(outputDir, `${options.prefix}_${fileName}`);
+    
+    sharp(filePath)
+      .resize(options)
+      .toFile(outputPath, (err) => {
+        if (err) {
+          console.error("Error processing image:", err);
+        } else {
+          console.log("Image saved at:", outputPath);
+        }
+      });
+  })
 };
 
 // Watch each folder path for changes using chokidar
