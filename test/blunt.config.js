@@ -4,7 +4,7 @@ module.exports = [
     output: "./optimized-images",
     sizes: [
       { width: 100, prefix: 'thumb'},
-      { width: 800, prefix: 'big'},
+      { width: 800, prefix: 'large'},
     ],
   },
   {

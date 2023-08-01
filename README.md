@@ -30,7 +30,7 @@ module.exports = [
 
 ```json
 "scripts": {
-  "blunt": "npx blunt ./blunt.config.js"
+  "blunt": "node ./node_modules/@ngblaylock/blunt-images ./blunt.config.js"
 },
 ```
 4. Run `npm run blunt`
