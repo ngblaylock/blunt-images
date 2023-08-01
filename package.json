@@ -1,5 +1,5 @@
 {
-  "name": "blunt-images",
+  "name": "@ngblaylock/blunt-images",
   "version": "0.0.1",
   "description": "A quick image resizing and optimization utility using Sharp for static sites.",
   "main": "index.js",

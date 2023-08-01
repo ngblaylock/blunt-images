@@ -48,18 +48,11 @@ const runSharp = (filePath, config) => {
   }
   
   config.sizes.forEach(size => {
-    options = {}
-    if(typeof size === 'number'){
-      options.width = size;
-      options.height = size;
-      options.prefix = `${size}`
-    }else{
-      options.width = size.width;
-      options.height = size.height;
-      options.prefix = `${size.width}x${size.height}`
-    }
-    options = {...options, ...config}
+    options = {...config, ...size }
     console.log(options);
+    if(!options.prefix){
+      options.prefix = (options.width || '') + (options.width && options.height ? 'x' : '') + (options.height || '');
+    }
     const outputPath = path.join(outputDir, `${options.prefix}_${fileName}`);
     
     sharp(filePath)
