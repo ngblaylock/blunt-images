@@ -13,9 +13,6 @@ if (!configFilePath) {
 
 // Resolve the absolute path of the config file relative to the current working directory
 const resolvedConfigFilePath = path.resolve(process.cwd(), configFilePath);
-
-console.log(resolvedConfigFilePath);
-
 const bluntConfig = require(resolvedConfigFilePath);
 
 // Get the directory of the config file
@@ -26,7 +23,7 @@ bluntConfig.forEach((config) => {
   const outputDir = path.resolve(configDir, config.output);
   if (fs.existsSync(outputDir)) {
     fsExtra.removeSync(outputDir);
-    console.log(`Deleted output folder: ${outputDir}`);
+    console.info(`Deleted output folder: ${outputDir}`);
   }
 });
 
@@ -38,7 +35,7 @@ const isImageFile = (fileName) => {
 };
 
 const runSharp = (filePath, config) => {
-  console.log("Running sharp on ", filePath);
+  console.info("Running sharp on ", filePath);
   const fileName = path.basename(filePath);
   const outputDir = path.resolve(configDir, config.output);
   
@@ -54,7 +51,6 @@ const runSharp = (filePath, config) => {
   
   config.sizes.forEach(size => {
     options = {...config, ...size }
-    console.log(options);
     if(!options.prefix){
       options.prefix = (options.width || '') + (options.width && options.height ? 'x' : '') + (options.height || '');
     }
@@ -66,7 +62,7 @@ const runSharp = (filePath, config) => {
         if (err) {
           console.error("Error processing image:", err);
         } else {
-          console.log("Image saved at:", outputPath);
+          console.info("Image saved at:", outputPath);
         }
       });
   })
@@ -75,8 +71,7 @@ const runSharp = (filePath, config) => {
 // Watch each folder path for changes using chokidar
 bluntConfig.forEach((config) => {
   const absoluteInputPath = path.resolve(configDir, config.input);
-  console.log(absoluteInputPath);
-  console.log(`Watching folders ${absoluteInputPath} for picture additions...`);
+  console.info(`Watching folders ${absoluteInputPath} for picture additions...`);
 
   // Create the chokidar watcher for each folder path
   const watcher = chokidar.watch(absoluteInputPath, {
@@ -94,6 +89,6 @@ bluntConfig.forEach((config) => {
   });
 
   watcher.on("unlink", (filePath) => {
-    console.log("File removed:", filePath);
+    console.info("File removed:", filePath);
   });
 });
