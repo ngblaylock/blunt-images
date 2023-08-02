@@ -1,6 +1,6 @@
 # Blunt Images
 
-Blunt Images is a quick and quite possibly not the best option for adding images to any static site generation tool (specifically 11ty and SvelteKit). A lot of my inspiration for this is a mesh between [Nuxt Image](https://image.nuxtjs.org/) and [Strapi's Media Library](https://strapi.io/features/media-library). 
+Blunt Images is a quick and quite possibly not the best option for adding optimized images to any static site generation tool (specifically 11ty and SvelteKit). A lot of my inspiration for this is a mesh between [Nuxt Image](https://image.nuxtjs.org/) and [Strapi's Media Library](https://strapi.io/features/media-library).
 
 > If anyone has a better way to do this, let me know. This is my hacky way to accomplish a need.
 > I have already looked at vite-imagetools (I don't like all the imports).
@@ -17,22 +17,33 @@ This runs as a separate NPM command so you can pair it with whatever you might h
 ```js
 module.exports = [
   {
-    input: "./images", // relative to the `blunt.config.js` file
-    output: "./optimized-images", // relative to the `blunt.config.js` file
+    input: "./images", // REQUIRED - relative to the `blunt.config.js` file
+    output: "./optimized-images", // REQUIRED - relative to the `blunt.config.js` file
     sizes: [
-      { width: 100, prefix: 'thumb'},
-      { width: 800, prefix: 'big'},
+      // Provide at least one size
+      {
+        width: 100, // OPTIONAL - but you should include width and/or height
+        height: 100, // OPTIONAL - but you should include width and/or height
+        prefix: "thumb", // OPTIONAL - if not present, it will prefix it with a combination of width and height. The width and height prefix will not always be the output file size depending on the fit option passed in.
+      },
     ],
+    // The following options are sharp options. Just don't use the `options.width` or `options.height` otherwise it will break (that is what the sizes array is for).
+    // See: https://sharp.pixelplumbing.com/api-resize
+    fit: "contain", // OPTIONAL
+    position: "centre", // OPTIONAL
+    background: { r: 0, g: 0, b: 0, alpha: 1 }, // OPTIONAL
   },
 ];
 ```
-3. Add the following to your `package.json`
+
+1. Add the following to your `package.json`
 
 ```json
 "scripts": {
   "blunt": "node ./node_modules/@ngblaylock/blunt-images ./blunt.config.js"
 },
 ```
+
 4. Run `npm run blunt`
 
 ## Deploy Process

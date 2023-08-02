@@ -15,7 +15,7 @@ module.exports = [
       { width: 300, height: 200 }, // landscape
       { width: 400, height: 400 }, // square
     ],
-    fit: "inside",
+    fit: "contain",
     position: "centre",
     background: { r: 0, g: 0, b: 0, alpha: 1 },
   },
