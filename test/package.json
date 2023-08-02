@@ -5,14 +5,13 @@
   "main": "blunt.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "blunt": "node ./node_modules/@ngblaylock/blunt-images ./blunt.config.js"
+    "blunt:local": "node ../ ./blunt.config.js",
+    "blunt:npm": "node ./node_modules/@ngblaylock/blunt-images ./blunt.config.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ngblaylock/blunt-images": "^1.0.0-beta.1",
-    "i": "^0.3.7",
-    "npm": "^9.8.1"
+    "@ngblaylock/blunt-images": "^1.0.0-beta.2"
   }
 }

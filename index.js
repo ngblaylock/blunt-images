@@ -2,20 +2,22 @@ const fs = require("fs");
 const path = require("path");
 const chokidar = require("chokidar");
 const sharp = require("sharp");
+const chalk = require("chalk");
 const fsExtra = require("fs-extra");
 const args = process.argv.slice(2);
 const configFilePath = args[0];
 
 if (!configFilePath) {
-  console.error("Usage: node index.js -f /path/to/config/file.js");
+  console.error(
+    chalk.red(
+      "Usage: node /path/to/@ngblaylock/blunt-images /path/to/config/file.js"
+    )
+  );
   process.exit(1);
 }
 
 // Resolve the absolute path of the config file relative to the current working directory
 const resolvedConfigFilePath = path.resolve(process.cwd(), configFilePath);
-
-console.log(resolvedConfigFilePath);
-
 const bluntConfig = require(resolvedConfigFilePath);
 
 // Get the directory of the config file
@@ -26,7 +28,7 @@ bluntConfig.forEach((config) => {
   const outputDir = path.resolve(configDir, config.output);
   if (fs.existsSync(outputDir)) {
     fsExtra.removeSync(outputDir);
-    console.log(`Deleted output folder: ${outputDir}`);
+    console.info(chalk.blue(`Resetting output folder:`), outputDir);
   }
 });
 
@@ -38,45 +40,75 @@ const isImageFile = (fileName) => {
 };
 
 const runSharp = (filePath, config) => {
-  console.log("Running sharp on ", filePath);
   const fileName = path.basename(filePath);
   const outputDir = path.resolve(configDir, config.output);
-  
+
   // Check if the output directory exists; if not, create it
   if (!fs.existsSync(outputDir)) {
     try {
       fs.mkdirSync(outputDir, { recursive: true });
     } catch (err) {
-      console.error("Error creating output directory:", err);
+      console.error(chalk.red("Error creating output directory:", err));
       return;
     }
   }
-  
-  config.sizes.forEach(size => {
-    options = {...config, ...size }
-    console.log(options);
-    if(!options.prefix){
-      options.prefix = (options.width || '') + (options.width && options.height ? 'x' : '') + (options.height || '');
+
+  config.sizes.forEach((size) => {
+    options = { ...config, ...size };
+    if (!options.prefix) {
+      options.prefix =
+        (options.width || "") +
+        (options.width && options.height ? "x" : "") +
+        (options.height || "");
     }
     const outputPath = path.join(outputDir, `${options.prefix}_${fileName}`);
-    
+
     sharp(filePath)
       .resize(options)
       .toFile(outputPath, (err) => {
         if (err) {
-          console.error("Error processing image:", err);
+          console.error(chalk.red("Error processing image:"), err);
         } else {
-          console.log("Image saved at:", outputPath);
+          console.info(chalk.green("Image saved:"), outputPath);
         }
       });
-  })
+  });
+};
+
+// Generate a JSON file for each set of images
+const generateJson = (config) => {
+  let data = [];
+  const outputDir = path.resolve(configDir, config.output);
+  let files = fs.readdirSync(outputDir).filter((file) => isImageFile(file));
+
+  (async () => {
+    const promises = files.map(async (file) => {
+      const metadata = await sharp(path.join(outputDir, file)).metadata();
+      return {
+        filename: file,
+        width: metadata.width,
+        height: metadata.height,
+        format: metadata.format,
+      };
+    });
+
+    const data = await Promise.all(promises);
+
+    const jsonData = JSON.stringify(data, null, 2);
+    const outputPath = path.join(outputDir, "_metadata.json");
+
+    fs.writeFile(outputPath, jsonData, "utf8", (err) => {
+      if (err) {
+        console.error(chalk.red("Error writing JSON file:", err));
+      }
+    });
+  })();
 };
 
 // Watch each folder path for changes using chokidar
 bluntConfig.forEach((config) => {
   const absoluteInputPath = path.resolve(configDir, config.input);
-  console.log(absoluteInputPath);
-  console.log(`Watching folders ${absoluteInputPath} for picture additions...`);
+  console.info(chalk.magenta(`Watching folders:`), absoluteInputPath);
 
   // Create the chokidar watcher for each folder path
   const watcher = chokidar.watch(absoluteInputPath, {
@@ -90,10 +122,14 @@ bluntConfig.forEach((config) => {
     const fileName = path.basename(filePath);
     if (fs.existsSync(filePath) && isImageFile(fileName)) {
       runSharp(filePath, config);
+      setTimeout(() => {
+        generateJson(config);
+      }, 1000);
     }
   });
 
   watcher.on("unlink", (filePath) => {
-    console.log("File removed:", filePath);
+    console.info(chalk.yellow("File removed:"), filePath);
+    generateJson(config);
   });
 });
