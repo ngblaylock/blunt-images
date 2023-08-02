@@ -1,13 +1,18 @@
 # Blunt Images
 
-Blunt Images is a quick and quite possibly not the best option for adding optimized images to any static site generation tool (specifically 11ty and SvelteKit). A lot of my inspiration for this is a mesh between [Nuxt Image](https://image.nuxtjs.org/) and [Strapi's Media Library](https://strapi.io/features/media-library).
+Blunt Images is a quick and, quite possibly, not the best option for adding optimized images to any static site generation tool (specifically 11ty and SvelteKit). A lot of my inspiration for this is a mesh between [Nuxt Image](https://image.nuxtjs.org/) and [Strapi's Media Library](https://strapi.io/features/media-library).
+
+"Blunt" comes from two things. First, it is an antonym of "Sharp", the package I use for resizing. "Blunt" can also mean that it is very straightforward, which I believe this package does well.
 
 > If anyone has a better way to do this, let me know. This is my hacky way to accomplish a need.
+>
 > I have already looked at vite-imagetools (I don't like all the imports).
 
-This was created so I could add an image and generate multiple sizes at build time. For example, I can upload an image to `./images/image-name.jpg` directory and it will create `./optimized-images/thumb_image-name.jpg` as well as `./optimized-images/large_image-name.jpg`. That way I don't have to create two images in Photoshop or Figma and export them.
+This was created so I could add one image to my files and that would trigger automatically generate multiple sizes. For example, I can upload an image to `./images/image-name.jpg` directory and it can create `./optimized-images/thumb_image-name.jpg` as well as `./optimized-images/large_image-name.jpg`. That way I don't have to create two images in Photoshop or Figma and export them.
 
-This runs as a separate NPM command so you can pair it with whatever you might have in `npm run dev`, `npm run build`, or comparative script.
+This is intended to run in parallel with whatever static site generator, so you can pair it with whatever you might have in `npm run dev`, `npm run build`, or comparative script.
+
+The main drawback to this script is that it will create images that you might not actually use in your site.
 
 ## Configuration
 
@@ -36,7 +41,7 @@ module.exports = [
 ];
 ```
 
-1. Add the following to your `package.json`
+3. Add the following to your `package.json`
 
 ```json
 "scripts": {
@@ -44,11 +49,16 @@ module.exports = [
 },
 ```
 
-4. Run `npm run blunt`
+4. Run `npm run blunt` to start watching the input directory(s). Whatever images are there will re-generate and any new images added will be watched and generated.
 
-## Deploy Process
+## Suggestion
+
+The optimized images probably don't need to be tracked by Git. As long as the original images are there whenever you run the script it will re-generate them for you.
+
+## Deploy Process (Note to self)
 
 1. Update the version in `package.json`
 2. Commit and push changes.
-3. Add a new release and tag in GitHub (v1.0.0-beta.x)
-4. Run `npm publish`
+3. Pull into `main`
+4. Add a new release and tag in GitHub (v1.0.0-beta.x)
+5. Run `npm publish`
