@@ -55,6 +55,10 @@ module.exports = [
 
 The optimized images probably don't need to be tracked by Git. As long as the original images are there whenever you run the script it will re-generate them for you.
 
+## Handle ESM Type Package
+
+If you have `"type": "module"` in your package.json you will likely get an error saying that blunt.config.js can't work. All you need to do is change your config file extension to `.cjs` like `blunt.config.cjs` and update the filename in your npm script.
+
 ## Deploy Process (Note to self)
 
 1. Update the version in `package.json`
