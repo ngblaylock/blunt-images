@@ -10,7 +10,7 @@ const configFilePath = args[0];
 if (!configFilePath) {
   console.error(
     chalk.red(
-      "Usage: node /path/to/@ngblaylock/blunt-images /path/to/config/file.js"
+      "Usage: node /path/to/node_modules/@ngblaylock/blunt-images /path/to/config/file.js"
     )
   );
   process.exit(1);
@@ -39,6 +39,7 @@ const isImageFile = (fileName) => {
   return imageExtensions.includes(ext);
 };
 
+// This is where the sizes are created
 const runSharp = (filePath, config) => {
   const fileName = path.basename(filePath);
   const outputDir = path.resolve(configDir, config.output);
@@ -53,8 +54,28 @@ const runSharp = (filePath, config) => {
     }
   }
 
+  if (config.includeOriginal) {
+    const outputPath = path.join(outputDir, fileName);
+    let fileFormat = path.extname(fileName).toLowerCase().split(".").pop();
+    let toFormatOptions = { quality: 80, progressive: true };
+    if (fileFormat === "jpeg" || fileFormat === "jpg") {
+      toFormatOptions.mozjpeg = true;
+      fileFormat === "jpeg";
+    }
+    sharp(filePath)
+      .toFormat(fileFormat, toFormatOptions) // Adjust options as needed
+      .toFile(outputPath, (err) => {
+        if (err) {
+          console.error(chalk.red("Error processing image:"), err);
+        } else {
+          console.info(chalk.green("Image saved:"), outputPath);
+        }
+      });
+  }
+
+  // For each size in the configuration, do the following.
   config.sizes.forEach((size) => {
-    options = { ...config, ...size };
+    options = { ...config.sharpOptions, ...size };
     if (!options.prefix) {
       options.prefix =
         (options.width || "") +
@@ -124,12 +145,14 @@ bluntConfig.forEach((config) => {
       runSharp(filePath, config);
       setTimeout(() => {
         generateJson(config);
-      }, 1000);
+      }, 3000);
     }
   });
-
+  
   watcher.on("unlink", (filePath) => {
     console.info(chalk.yellow("File removed:"), filePath);
-    generateJson(config);
+    setTimeout(() => {
+      generateJson(config);
+    }, 3000);
   });
 });

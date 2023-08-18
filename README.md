@@ -8,7 +8,7 @@ Blunt Images is a quick and, quite possibly, not the best option for adding opti
 >
 > I have already looked at vite-imagetools (I don't like all the imports).
 
-This was created so I could add one image to my files and that would trigger automatically generate multiple sizes. For example, I can upload an image to `./images/image-name.jpg` directory and it can create `./optimized-images/thumb_image-name.jpg` as well as `./optimized-images/large_image-name.jpg`. That way I don't have to create two images in Photoshop or Figma and export them.
+This was created so I could add one image to my directory which would trigger Node to generate multiple sizes. For example, I can upload an image to `./images/image-name.jpg` directory and it would create `./optimized-images/thumb_image-name.jpg` as well as `./optimized-images/large_image-name.jpg`. That way I don't have to create two sizes of the same images in Photoshop or Figma and export them.
 
 This is intended to run in parallel with whatever static site generator, so you can pair it with whatever you might have in `npm run dev`, `npm run build`, or comparative script.
 
@@ -24,19 +24,24 @@ module.exports = [
   {
     input: "./images", // REQUIRED - relative to the `blunt.config.js` file
     output: "./optimized-images", // REQUIRED - relative to the `blunt.config.js` file
+    includeOriginal: false, // OPTIONAL - Boolean, default false. This will provide a optimized image at the original width and height (sizes have no effect here)
     sizes: [
       // Provide at least one size
       {
         width: 100, // OPTIONAL - but you should include width and/or height
         height: 100, // OPTIONAL - but you should include width and/or height
-        prefix: "thumb", // OPTIONAL - if not present, it will prefix it with a combination of width and height. The width and height prefix will not always be the output file size depending on the fit option passed in.
+        prefix: "thumb", // OPTIONAL - if not present, it will prefix it with a combination of width and height. The width and height prefix will not always be the output file size depending on the fit option passed in `sharpOptions`.
       },
     ],
-    // The following options are sharp options. Just don't use the `options.width` or `options.height` otherwise it will break (that is what the sizes array is for).
+    // The following options are sharp resize options (options.*). Just don't use the `options.width` or `options.height` otherwise it will break (that is what the sizes array above is for).
+    // OPTIONAL - All below
     // See: https://sharp.pixelplumbing.com/api-resize
-    fit: "contain", // OPTIONAL
-    position: "centre", // OPTIONAL
-    background: { r: 0, g: 0, b: 0, alpha: 1 }, // OPTIONAL
+    sharpOptions: {
+      fit: "contain",
+      position: "centre",
+      background: { r: 0, g: 0, b: 0, alpha: 1 },
+      withoutEnlargement: true,
+    },
   },
 ];
 ```
@@ -55,10 +60,6 @@ module.exports = [
 
 The optimized images probably don't need to be tracked by Git. As long as the original images are there whenever you run the script it will re-generate them for you.
 
-## Deploy Process (Note to self)
+## Handle ESM Type Package
 
-1. Update the version in `package.json`
-2. Commit and push changes.
-3. Pull into `main`
-4. Add a new release and tag in GitHub (v1.0.0-beta.x)
-5. Run `npm publish`
+If you have `"type": "module"` in your package.json you will likely get an error saying that blunt.config.js can't work. All you need to do is change your config file extension to `.cjs` like `blunt.config.cjs` and update the filename in your npm script.
