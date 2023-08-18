@@ -3,6 +3,7 @@ module.exports = [
     input: "./images",
     output: "./optimized-images",
     includeOriginal: true,
+    preserveFileStructure: true,
     sizes: [
       { width: 100, height: 200, prefix: 'thumb'},
       { width: 800, height: 400, prefix: 'large'},

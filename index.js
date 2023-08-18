@@ -42,7 +42,16 @@ const isImageFile = (fileName) => {
 // This is where the sizes are created
 const runSharp = (filePath, config) => {
   const fileName = path.basename(filePath);
-  const outputDir = path.resolve(configDir, config.output);
+  const inputDir = path.resolve(configDir, config.input);
+  let outputDir = path.resolve(configDir, config.output);
+  if (config.preserveFileStructure) {
+    let joinedPath = filePath
+      .replace(inputDir, "")
+      .split("/")
+      .slice(0, -1)
+      .join("/");
+    outputDir = path.join(outputDir, joinedPath);
+  }
 
   // Check if the output directory exists; if not, create it
   if (!fs.existsSync(outputDir)) {
@@ -148,7 +157,7 @@ bluntConfig.forEach((config) => {
       }, 3000);
     }
   });
-  
+
   watcher.on("unlink", (filePath) => {
     console.info(chalk.yellow("File removed:"), filePath);
     setTimeout(() => {

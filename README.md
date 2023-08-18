@@ -25,6 +25,7 @@ module.exports = [
     input: "./images", // REQUIRED - relative to the `blunt.config.js` file
     output: "./optimized-images", // REQUIRED - relative to the `blunt.config.js` file
     includeOriginal: false, // OPTIONAL - Boolean, default false. This will provide a optimized image at the original width and height (sizes have no effect here)
+    preserveFileStructure: false, // OPTIONAL - Boolean, default false. If true, this will keep the folder structure in the output directory used in the input directory. If false, it will move all files over directly under the output directory
     sizes: [
       // Provide at least one size
       {
