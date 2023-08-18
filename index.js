@@ -54,7 +54,6 @@ const runSharp = (filePath, config) => {
     }
   }
 
-  // TODO: Add in the original here
   if (config.includeOriginal) {
     const outputPath = path.join(outputDir, fileName);
     let fileFormat = path.extname(fileName).toLowerCase().split(".").pop();
