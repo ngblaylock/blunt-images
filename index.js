@@ -170,9 +170,7 @@ bluntConfig.forEach(async (config) => {
     });
   } else {
     // Not Watching
-    console.log("Get all nested files", absoluteInputPath);
     const pattern = imageExtensions.join(",").replaceAll(".", "");
-
     // Use glob to list image files recursively
     const imageFiles = await glob(`${absoluteInputPath}/**/*.{${pattern}}`);
     imageFiles.forEach((fileName) => {

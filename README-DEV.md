@@ -10,7 +10,8 @@
 ## Deploy Process
 
 1. Update the version in `package.json`
-2. Commit and push changes.
-3. Pull into `main`
-4. Add a new release and tag in GitHub (v1.0.0-beta.x)
-5. Run `npm publish`
+2. Remove all `console.log` instances
+3. Commit and push changes.
+4. Pull into `main`
+5. Add a new release and tag in GitHub (v1.0.0-beta.x)
+6. Run `npm publish`
