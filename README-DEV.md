@@ -7,7 +7,7 @@
    - `npm run blunt:local` Develop with the local blunt JS file in the root of the project
    - `npm run blunt:npm` Develop with the version installed from NPM in ./test/node_modules/@ngblaylock/blunt-images
 
-## Deploy Process (Note to self)
+## Deploy Process
 
 1. Update the version in `package.json`
 2. Commit and push changes.
