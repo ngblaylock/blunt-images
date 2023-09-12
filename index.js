@@ -4,8 +4,11 @@ const chokidar = require("chokidar");
 const sharp = require("sharp");
 const chalk = require("chalk");
 const fsExtra = require("fs-extra");
+const glob = require("glob").glob;
 const args = process.argv.slice(2);
 const configFilePath = args[0];
+const watch = args.some((arg) => arg == "--watch" || arg == "-w");
+const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"];
 
 if (!configFilePath) {
   console.error(
@@ -34,7 +37,6 @@ bluntConfig.forEach((config) => {
 
 // Function to check if a file has a valid image extension
 const isImageFile = (fileName) => {
-  const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"];
   const ext = path.extname(fileName).toLowerCase();
   return imageExtensions.includes(ext);
 };
@@ -136,32 +138,48 @@ const generateJson = (config) => {
 };
 
 // Watch each folder path for changes using chokidar
-bluntConfig.forEach((config) => {
+bluntConfig.forEach(async (config) => {
   const absoluteInputPath = path.resolve(configDir, config.input);
-  console.info(chalk.magenta(`Watching folders:`), absoluteInputPath);
 
-  // Create the chokidar watcher for each folder path
-  const watcher = chokidar.watch(absoluteInputPath, {
-    ignored: /^\./,
-    persistent: true,
-  });
+  if (watch) {
+    console.info(chalk.magenta(`Watching folders:`), absoluteInputPath);
 
-  // Add event listeners for 'add' and 'unlink' events
-  watcher.on("add", (filePath) => {
-    // Check if the added item is a file and has a valid image extension
-    const fileName = path.basename(filePath);
-    if (fs.existsSync(filePath) && isImageFile(fileName)) {
-      runSharp(filePath, config);
+    // Create the chokidar watcher for each folder path
+    const watcher = chokidar.watch(absoluteInputPath, {
+      ignored: /^\./,
+      persistent: true,
+    });
+
+    // Add event listeners for 'add' and 'unlink' events
+    watcher.on("add", (filePath) => {
+      // Check if the added item is a file and has a valid image extension
+      const fileName = path.basename(filePath);
+      if (fs.existsSync(filePath) && isImageFile(fileName)) {
+        runSharp(filePath, config);
+        setTimeout(() => {
+          generateJson(config);
+        }, 3000);
+      }
+    });
+
+    watcher.on("unlink", (filePath) => {
+      console.info(chalk.yellow("File removed:"), filePath);
       setTimeout(() => {
         generateJson(config);
       }, 3000);
-    }
-  });
+    });
+  } else {
+    // Not Watching
+    console.log("Get all nested files", absoluteInputPath);
+    const pattern = imageExtensions.join(",").replaceAll(".", "");
 
-  watcher.on("unlink", (filePath) => {
-    console.info(chalk.yellow("File removed:"), filePath);
+    // Use glob to list image files recursively
+    const imageFiles = await glob(`${absoluteInputPath}/**/*.{${pattern}}`);
+    imageFiles.forEach((fileName) => {
+      runSharp(fileName, config);
+    });
     setTimeout(() => {
       generateJson(config);
     }, 3000);
-  });
+  }
 });

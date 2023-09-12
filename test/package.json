@@ -5,7 +5,9 @@
   "main": "blunt.config.js",
   "scripts": {
     "blunt:local": "node ../ ./blunt.config.js",
-    "blunt:npm": "node ./node_modules/@ngblaylock/blunt-images ./blunt.config.js"
+    "blunt:npm": "node ./node_modules/@ngblaylock/blunt-images ./blunt.config.js",
+    "blunt:local:watch": "node ../ ./blunt.config.js -w",
+    "blunt:npm:watch": "node ./node_modules/@ngblaylock/blunt-images ./blunt.config.js -w"
   },
   "keywords": [],
   "author": "",
