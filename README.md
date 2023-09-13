@@ -16,8 +16,13 @@ The main drawback with this script is that it may create images that you might n
 
 ## Configuration
 
-1. Run `npm install @ngblaylock/blunt-images`.
-2. Create a `blunt.config.js` file with the following:
+### Step 1
+
+Run `npm install @ngblaylock/blunt-images`.
+
+### Step 2
+
+Create a `blunt.config.js` file with the following boilerplate. You can refer to my [test blunt.config.js](https://github.com/ngblaylock/blunt-images/blob/main/test/blunt.config.js) for a more robust example.
 
 ```js
 module.exports = [
@@ -25,29 +30,27 @@ module.exports = [
     input: "./images", // REQUIRED - relative to the `blunt.config.js` file
     output: "./optimized-images", // REQUIRED - relative to the `blunt.config.js` file
     includeOriginal: false, // OPTIONAL - Boolean, default false. This will provide a optimized image at the original width and height (sizes have no effect here)
-    preserveFileStructure: false, // OPTIONAL - Boolean, default false. If true, this will keep the folder structure in the output directory used in the input directory. If false, it will move all files over directly under the output directory
-    sizes: [
-      // Provide at least one size
-      {
-        width: 100, // OPTIONAL - but you must include width and/or height
-        height: 100, // OPTIONAL - but you must include width and/or height
-        prefix: "thumb", // OPTIONAL - if not present, it will prefix it with a combination of width and height. The width and height prefix will not always be the output file size depending on the fit option passed in `sharpOptions`.
+    preserveFileStructure: false, // OPTIONAL - Boolean, default false. If true, this will preserve the same folder structure in the output directory used in the input directory. If false, it will output all files directly under the output directory
+    sizes: {
+      // Provide at least one size. The object key here will be the name of the file prefix. All images generated with this example will be prefixed with 'thumb_'
+      thumb: {
+        // OPTIONAL - but you must include width and/or height
+        // See: https://sharp.pixelplumbing.com/api-resize
+        width: 100,
+        height: 100,
+        fit: "contain",
+        position: "centre",
+        background: { r: 0, g: 0, b: 0, alpha: 1 },
+        withoutEnlargement: true,
       },
-    ],
-    // The following options are sharp resize options (options.*). Just don't use the `options.width` or `options.height` otherwise it will break (that is what the sizes array above is for).
-    // OPTIONAL - All below
-    // See: https://sharp.pixelplumbing.com/api-resize
-    sharpOptions: {
-      fit: "contain",
-      position: "centre",
-      background: { r: 0, g: 0, b: 0, alpha: 1 },
-      withoutEnlargement: true,
     },
   },
 ];
 ```
 
-3. Add the following to your `package.json`
+### Step 3
+
+Add the following to your `package.json`
 
 ```json
 "scripts": {
@@ -56,7 +59,9 @@ module.exports = [
 },
 ```
 
-4. Run `npm run blunt:watch` to start watching the input directory(s). Whatever images are there will re-generate and any new images added will be watched and generated. If you don't need to watch new files, just exclude the `--watch` or the `-w`.
+### Step 4
+
+Run `npm run blunt:watch` to start watching the input directory(s). Whatever images are there will re-generate and any new images added will be watched and generated. If you don't need to watch new files, just exclude the `--watch` or the `-w`.
 
 ## Suggestion
 

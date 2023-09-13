@@ -85,31 +85,24 @@ const runSharp = (filePath, config) => {
   }
 
   // For each size in the configuration, do the following.
-  config.sizes.forEach((size) => {
-    options = { ...config.sharpOptions, ...size };
-    if (!options.prefix) {
-      options.prefix =
-        (options.width || "") +
-        (options.width && options.height ? "x" : "") +
-        (options.height || "");
+  for (const [key, options] of Object.entries(config.sizes)) {
+    if (options.width || options.height) {
+      const outputPath = path.join(outputDir, `${key}_${fileName}`);
+      sharp(filePath)
+        .resize(options)
+        .toFile(outputPath, (err) => {
+          if (err) {
+            console.error(chalk.red("Error processing image:"), err);
+          } else {
+            console.info(chalk.green("Image saved:"), outputPath);
+          }
+        });
     }
-    const outputPath = path.join(outputDir, `${options.prefix}_${fileName}`);
-
-    sharp(filePath)
-      .resize(options)
-      .toFile(outputPath, (err) => {
-        if (err) {
-          console.error(chalk.red("Error processing image:"), err);
-        } else {
-          console.info(chalk.green("Image saved:"), outputPath);
-        }
-      });
-  });
+  }
 };
 
 // Generate a JSON file for each set of images
 const generateJson = (config) => {
-  let data = [];
   const outputDir = path.resolve(configDir, config.output);
   let files = fs.readdirSync(outputDir).filter((file) => isImageFile(file));
 
