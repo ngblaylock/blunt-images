@@ -1,6 +1,6 @@
 # Blunt Images
 
-Blunt Images is a quick and easy option for adding optimized images to any static site generation tool (like 11ty or SvelteKit). A lot of my inspiration for this is a mesh between [Nuxt Image](https://image.nuxtjs.org/) and [Strapi's Media Library](https://strapi.io/features/media-library).
+Blunt Images is a quick and easy tool for adding optimized images to any static site generation tool (like 11ty or SvelteKit). A lot of my inspiration for this is a mesh between [Nuxt Image](https://image.nuxtjs.org/) and [Strapi's Media Library](https://strapi.io/features/media-library).
 
 "Blunt" comes from two things. First, it is an antonym of "Sharp", the package I use for resizing. I use an antonym because this is a hacky solution to my problem. "Blunt" can also mean that it is very straightforward, which I believe this package does well.
 
@@ -10,7 +10,7 @@ Blunt Images is a quick and easy option for adding optimized images to any stati
 
 This was created so I could add one image to my directory which would trigger Node to generate multiple sizes. For example, I can upload an image to `./images/image-name.jpg` directory and based on my configuration file it would create `./optimized-images/thumb_image-name.jpg` as well as `./optimized-images/large_image-name.jpg`. That way I don't have to create two sizes of the same images in Photoshop or Figma and export them.
 
-This is intended to run in parallel with any static site generator, so you can pair it with whatever you might have in `npm run dev`, `npm run build`, or comparative script.
+This is intended to be used with any static site generator, so you can pair it with whatever you might have in `npm run dev`, `npm run build`, or comparative script.
 
 The main drawback with this script is that it may create images that you might not actually use in your site.
 
