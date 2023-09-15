@@ -14,11 +14,11 @@ module.exports = [
       thumb: {
         width: 100,
         height: 200,
+        fit: 'inside'
       },
       large: {
-        width: 1000,
-        height: 800,
-        fit: "inside",
+        width: 400,
+        height: 300,
       },
     },
   },
